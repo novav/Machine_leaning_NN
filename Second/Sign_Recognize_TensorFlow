@@ -59,8 +59,9 @@ def initialize_parameters():
         "W3": W3,
         "b3": b3,
     }
+    return parameters
 
-def froward_propagation(X, parameters):
+def forward_propagation(X, parameters):
 
     W1 = parameters['W1']
     b1 = parameters['b1']
@@ -71,18 +72,18 @@ def froward_propagation(X, parameters):
 
     Z1 = tf.add(tf.matmul(W1, X), b1)
     A1 = tf.nn.relu(Z1)
-    Z2 = tf.add(tf.matmul(W2, X), b2)
+    Z2 = tf.add(tf.matmul(W2, A1), b2)
     A2 = tf.nn.relu(Z2)
-    Z3 = tf.add(tf.matmul(W3, X), b3)
+    Z3 = tf.add(tf.matmul(W3, A2), b3)
 
     return Z3
 
 def compute_cost(Z3, Y):
-
-    logist = tf.transpose(Z3)
+    logits = tf.transpose(Z3)
     labels = tf.transpose(Y)
 
-    cost = tf.reduce_mean(tf.nn.softmax(tf.nn.softmax_cross_entropy_with_logits(logist = logist, labels = labels)))
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = logits, labels = labels))
+    return cost
 
 def random_mini_batches(X, Y, mini_batch_size = 64, seed = 0):
 
@@ -125,7 +126,7 @@ def predict(X, parameters):
         "W2": W2,
         "b2": b2,
         "W3": W3,
-        "b3": b3,
+        "b3": b3
     }
 
     x = tf.placeholder("float", [12288,1])
@@ -149,13 +150,13 @@ def forward_propagation_for_predict(X, parameters):
 
     Z1 = tf.add(tf.matmul(W1, X), b1)
     A1 = tf.nn.relu(Z1)
-    Z2 = tf.add(tf.matmul(W2, X), b2)
+    Z2 = tf.add(tf.matmul(W2, A1), b2)
     A2 = tf.nn.relu(Z2)
-    Z3 = tf.add(tf.matmul(W3, X), b3)
+    Z3 = tf.add(tf.matmul(W3, A2), b3)
 
     return Z3
 
-def model(X_train, Y_train, X_test, Y_test, leaning_rate=0.0001, num_epochs = 1500, minibatch_size = 32, print_cost = True):
+def model(X_train, Y_train, X_test, Y_test, learning_rate=0.0001, num_epochs = 1500, minibatch_size = 32, print_cost = True):
 
     ops.reset_default_graph()
     tf.set_random_seed(1)
@@ -166,11 +167,11 @@ def model(X_train, Y_train, X_test, Y_test, leaning_rate=0.0001, num_epochs = 15
 
     X, Y = create_placeholders(n_x, n_y)
     parameters = initialize_parameters()
-    Z3 = forward_propagation_for_predict(X, parameters)
+    Z3 = forward_propagation(X, parameters)
     cost = compute_cost(Z3, Y)
-    optimizer = tf.train.AdamOptimizer(leaning_rate = leaning_rate).minimize(cost) # Adam
+    optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate).minimize(cost) # Adam
 
-    init = tf.global_variables(num_epochs)
+    init = tf.global_variables_initializer()
 
     with tf.Session() as sess:
 
@@ -184,24 +185,24 @@ def model(X_train, Y_train, X_test, Y_test, leaning_rate=0.0001, num_epochs = 15
             for minibatch in minibatches:
                 (minibatch_X, minibatch_Y) = minibatch
                 _, minibatch_cost = sess.run([optimizer, cost], feed_dict={X:minibatch_X, Y: minibatch_Y})
-                epoch_cost += minibatch_cost / minibatches
+                epoch_cost += minibatch_cost / num_minibatches
 
             if print_cost == True and epoch % 100 == 0:
-                print("%1 epoch 后的成本值： %f" %(epoch, epoch_cost))
+                print("%i epoch 后的成本值 : %f" % (epoch, epoch_cost))
             if print_cost == True and epoch % 5 == 0:
                 costs.append(epoch_cost)
         plt.plot(np.squeeze(costs))
         plt.ylabel('cost')
         plt.xlabel('iterations(per tens)')
-        plt.title("learning rate = " + str(leaning_rate))
+        plt.title("learning rate = " + str(learning_rate))
         plt.show()
 
         parameters = sess.run(parameters)
         print("参数训练完毕")
 
-        correct_preiction = tf.equal(tf.argmax(Z3), tf.argnax(Y))
+        correct_prediction = tf.equal(tf.argmax(Z3), tf.argmax(Y))
 
-        accuracy = tf.reduce_mean(tf.cast(correct_preiction, "float"))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
         print("训练集精确度 ", accuracy.eval({X: X_train, Y: Y_train}))
         print("测试集精确度 ", accuracy.eval({X: X_test, Y: Y_test}))
@@ -219,3 +220,22 @@ Y_train = convert_to_one_hot(Y_train_orig, 6) #变为one-hot形式
 Y_test = convert_to_one_hot(Y_test_orig, 6)
 
 parameters = model(X_train, Y_train, X_test, Y_test)
+
+
+# 2018-03-18 23:39:23.093560: I C:\tf_jenkins\home\workspace\rel-win\M\windows\PY\36\tensorflow\core\platform\cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX
+# 0 epoch 后的成本值 : 1.855702
+# 100 epoch 后的成本值 : 1.016458
+# 200 epoch 后的成本值 : 0.733102
+# 300 epoch 后的成本值 : 0.572939
+# 400 epoch 后的成本值 : 0.468774
+# 500 epoch 后的成本值 : 0.381021
+# 600 epoch 后的成本值 : 0.313827
+# 700 epoch 后的成本值 : 0.254280
+# 800 epoch 后的成本值 : 0.203799
+# 900 epoch 后的成本值 : 0.166512
+# 1000 epoch 后的成本值 : 0.140937
+# 1100 epoch 后的成本值 : 0.107750
+# 1200 epoch 后的成本值 : 0.086299
+# 参数训练完毕
+# 训练集精确度  0.999074
+# 测试集精确度  0.725
