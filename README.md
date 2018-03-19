@@ -8,7 +8,8 @@
 
 ## Second
 - Sign Recognize TensorFlow 实现手势识别(MNIST)
-- DNN TensorFlow (MNIST)
+- MNIST TensorFlow DNN (MNIST)
+- MNIST TensorFlow (MNIST)
 - SVG [MNIST] ![SVG](http://blog.csdn.net/chunxiao2008/article/details/50448154)
 - Initialization_Regularization_Gradient-Checking
 - Optimization_Methods
