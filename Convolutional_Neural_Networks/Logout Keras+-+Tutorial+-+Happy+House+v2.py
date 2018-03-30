@@ -16,7 +16,7 @@ from keras.utils import plot_model
 # 模型准确度很差
 # 模型准确度很差
 
-from kt_utils import *
+from resnets_utils import *
 
 import keras.backend as K
 
