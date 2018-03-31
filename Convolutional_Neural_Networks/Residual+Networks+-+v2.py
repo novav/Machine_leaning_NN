@@ -231,38 +231,50 @@ def ResNet50(input_shape=(64, 64, 3), classes=6):
 
     return model
 
-model = ResNet50(input_shape = (64, 64, 3), classes = 6)
+
+
+
+global model, X_test, Y_test, preds
+model = ResNet50(input_shape=(64, 64, 3), classes=6)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_dataset_signs()
+def method_train():
 
-# Normalize image vectors
-X_train = X_train_orig/255.
-X_test = X_test_orig/255.
+    X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_dataset_signs()
+    # Normalize image vectors
+    X_train = X_train_orig / 255.
+    X_test = X_test_orig / 255.
+    # Convert training and test labels to one hot matrices
+    Y_train = convert_to_one_hot(Y_train_orig, 6).T
+    Y_test = convert_to_one_hot(Y_test_orig, 6).T
+    print("number of training examples = " + str(X_train.shape[0]))
+    print("number of test examples = " + str(X_test.shape[0]))
+    print("X_train shape: " + str(X_train.shape))
+    print("Y_train shape: " + str(Y_train.shape))
+    print("X_test shape: " + str(X_test.shape))
+    print("Y_test shape: " + str(Y_test.shape))
+    model.fit(X_train, Y_train, epochs=2, batch_size=32)
+    preds = model.evaluate(X_test, Y_test)
+    print("Loss = " + str(preds[0]))
+    print("Test Accuracy = " + str(preds[1]))
+    # Loss = 3.16581471761
+    # Test Accuracy = 0.166666666667
+    return  model;
 
-# Convert training and test labels to one hot matrices
-Y_train = convert_to_one_hot(Y_train_orig, 6).T
-Y_test = convert_to_one_hot(Y_test_orig, 6).T
 
-print ("number of training examples = " + str(X_train.shape[0]))
-print ("number of test examples = " + str(X_test.shape[0]))
-print ("X_train shape: " + str(X_train.shape))
-print ("Y_train shape: " + str(Y_train.shape))
-print ("X_test shape: " + str(X_test.shape))
-print ("Y_test shape: " + str(Y_test.shape))
+# method_train()
 
-model.fit(X_train, Y_train, epochs = 2, batch_size = 32)
+# Fail load todo 2019-03-31
+def model_load():
+    global model, preds
+    model = load_model('resnet50_weights_tf_dim_ordering_tf_kernels.h5')
+    preds = model.evaluate(X_test, Y_test)
+    print("Loss = " + str(preds[0]))
+    print("Test Accuracy = " + str(preds[1]))
+    return model
 
-preds = model.evaluate(X_test, Y_test)
-print ("Loss = " + str(preds[0]))
-print ("Test Accuracy = " + str(preds[1]))
-# Loss = 3.16581471761
-# Test Accuracy = 0.166666666667
 
-model = load_model('ResNet50.h5')
-preds = model.evaluate(X_test, Y_test)
-print ("Loss = " + str(preds[0]))
-print ("Test Accuracy = " + str(preds[1]))
+model = model_load()
 
 
 img_path = 'images/my_image_sign.jpg'
