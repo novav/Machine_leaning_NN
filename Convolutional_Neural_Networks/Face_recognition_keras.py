@@ -75,10 +75,10 @@ def img_to_encoding(image_path, model):
     return embedding
 
 
-def load_weights_from_FaceNet(FRmodel):
+def load_weights_from_FaceNet(FRmodel, weights_path):
     # Load weights from csv files (which was exported from Openface torch model)
     weights = WEIGHTS
-    weights_dict = load_weights()
+    weights_dict = load_weights(weights_path)
 
     # Set layer weights of the model
     for name in weights:
@@ -88,9 +88,8 @@ def load_weights_from_FaceNet(FRmodel):
             FRmodel.get_layer(name).set_weights(weights_dict[name])
 
 
-def load_weights():
-    # Set weights path
-    dirPath = './face/weights'
+def load_weights(dirPath):
+
     fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirPath))
     paths = {}
     weights_dict = {}
@@ -486,28 +485,32 @@ def faceRecoModel(input_shape):
 
     return model
 
-
-
+root_path = "face/"
+# Set weights path
+dirPath_weights = root_path + "weights/"
+face_image_root = root_path + "images/"
 
 FRmodel = faceRecoModel(input_shape=(3, 96, 96))
 FRmodel.compile(optimizer='adam', loss=triplet_loss, metrics=['accuracy'])
-load_weights_from_FaceNet(FRmodel)
+
+load_weights_from_FaceNet(FRmodel, dirPath_weights)
 
 database = {}
-database["danielle"] = img_to_encoding("images/face/danielle.png", FRmodel)
-database["younes"] = img_to_encoding("images/face/younes.jpg", FRmodel)
-database["tian"] = img_to_encoding("images/face/tian.jpg", FRmodel)
-database["andrew"] = img_to_encoding("images/face/andrew.jpg", FRmodel)
-database["kian"] = img_to_encoding("images/face/kian.jpg", FRmodel)
-database["dan"] = img_to_encoding("images/face/dan.jpg", FRmodel)
-database["sebastiano"] = img_to_encoding("images/face/sebastiano.jpg", FRmodel)
-database["bertrand"] = img_to_encoding("images/face/bertrand.jpg", FRmodel)
-database["kevin"] = img_to_encoding("images/face/kevin.jpg", FRmodel)
-database["felix"] = img_to_encoding("images/face/felix.jpg", FRmodel)
-database["benoit"] = img_to_encoding("images/face/benoit.jpg", FRmodel)
-database["arnaud"] = img_to_encoding("images/face/arnaud.jpg", FRmodel)
+
+database["danielle"] = img_to_encoding(face_image_root + "danielle.png", FRmodel)
+database["younes"] = img_to_encoding(face_image_root + "younes.jpg", FRmodel)
+database["tian"] = img_to_encoding(face_image_root + "tian.jpg", FRmodel)
+database["andrew"] = img_to_encoding(face_image_root + "andrew.jpg", FRmodel)
+database["kian"] = img_to_encoding(face_image_root + "kian.jpg", FRmodel)
+database["dan"] = img_to_encoding(face_image_root + "dan.jpg", FRmodel)
+database["sebastiano"] = img_to_encoding(face_image_root + "sebastiano.jpg", FRmodel)
+database["bertrand"] = img_to_encoding(face_image_root + "bertrand.jpg", FRmodel)
+database["kevin"] = img_to_encoding(face_image_root + "kevin.jpg", FRmodel)
+database["felix"] = img_to_encoding(face_image_root + "felix.jpg", FRmodel)
+database["benoit"] = img_to_encoding(face_image_root + "benoit.jpg", FRmodel)
+database["arnaud"] = img_to_encoding(face_image_root + "arnaud.jpg", FRmodel)
 
 
-verify("images/face/camera_0.jpg", "younes", database, FRmodel)
+verify(face_image_root + "camera_0.jpg", "younes", database, FRmodel)
 
-who_is_it("images/face/camera_0.jpg", database, FRmodel)
+who_is_it(face_image_root + "camera_0.jpg", database, FRmodel)
