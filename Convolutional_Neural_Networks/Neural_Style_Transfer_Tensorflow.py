@@ -241,7 +241,7 @@ style_image = reshape_and_normalize_image(style_image)
 generated_image = generate_noise_image(content_image)
 
 
-model = load_vgg_model("model_data/imagenet-vgg-verydeep-19-origin.mat")
+model = load_vgg_model("model_data/style/imagenet-vgg-verydeep-19-origin.mat")
 
 sess.run(model['input'].assign(content_image))
 

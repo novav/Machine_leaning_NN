@@ -267,7 +267,7 @@ def method_train():
 # Fail load todo 2019-03-31
 def model_load():
     global model, preds
-    model = load_model('resnet50_weights_tf_dim_ordering_tf_kernels.h5')
+    model = load_model('Residual/resnet50_weights_tf_dim_ordering_tf_kernels.h5')
     preds = model.evaluate(X_test, Y_test)
     print("Loss = " + str(preds[0]))
     print("Test Accuracy = " + str(preds[1]))
@@ -277,7 +277,7 @@ def model_load():
 model = model_load()
 
 
-img_path = 'images/my_image_sign.jpg'
+img_path = 'Residual/images/my_image_sign.jpg'
 img = image.load_img(img_path, target_size=(64, 64))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
