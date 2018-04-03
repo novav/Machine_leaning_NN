@@ -159,7 +159,7 @@ happyModel = HappyModel((64, 64, 3))
 happyModel.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
 ### END CODE HERE ###
 ### START CODE HERE ### (1 line)
-happyModel.fit(x=X_train, y=Y_train, epochs=20, batch_size=16)
+happyModel.fit(x=X_train, y=Y_train, epochs=1, batch_size=1)
 ### END CODE HERE ###
 ### START CODE HERE ### (1 line)
 preds = happyModel.evaluate(x=X_test, y=Y_test)
@@ -173,10 +173,10 @@ print("Test Accuracy = " + str(preds[1]))
 # [[ 0.99550456]]
 
 ### START CODE HERE ###
-predicatImage('images/my_image.jpg')
-predicatImage('images/my_image_3.jpg')
-predicatImage('images/my_image_4.jpg')
-predicatImage('images/old_man.jpg')
+predicatImage('happy_house/images/my_image.jpg')
+predicatImage('happy_house/images/my_image_3.jpg')
+predicatImage('happy_house/images/my_image_4.jpg')
+predicatImage('happy_house/images/old_man.jpg')
 ### END CODE HERE ###
 
 happyModel.summary()

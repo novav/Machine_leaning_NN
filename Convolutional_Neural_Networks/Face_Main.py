@@ -90,13 +90,13 @@ def load_weights_from_FaceNet(FRmodel):
 
 def load_weights():
     # Set weights path
-    dirpath = './face/weights'
-    fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirpath))
+    dirPath = './weights'
+    fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirPath))
     paths = {}
     weights_dict = {}
 
     for n in fileNames:
-        paths[n.replace('.csv', '')] = dirpath + '/' + n
+        paths[n.replace('.csv', '')] = dirPath + '/' + n
     for name in WEIGHTS:
         if 'conv' in name:
             conv_w = genfromtxt(paths[name + '_w'], delimiter=',', dtype=None)
@@ -111,13 +111,14 @@ def load_weights():
             bn_v = genfromtxt(paths[name + '_v'], delimiter=',', dtype=None)
             weights_dict[name] = [bn_w, bn_b, bn_m, bn_v]
         elif 'dense' in name:
-            dense_w = genfromtxt(dirpath + '/dense_w.csv', delimiter=',', dtype=None)
+            dense_w = genfromtxt(dirPath + '/dense_w.csv', delimiter=',', dtype=None)
             dense_w = np.reshape(dense_w, (128, 736))
             dense_w = np.transpose(dense_w, (1, 0))
-            dense_b = genfromtxt(dirpath + '/dense_b.csv', delimiter=',', dtype=None)
+            dense_b = genfromtxt(dirPath + '/dense_b.csv', delimiter=',', dtype=None)
             weights_dict[name] = [dense_w, dense_b]
 
     return weights_dict
+
 
 
 def conv2d_bn(x,
@@ -144,7 +145,6 @@ def conv2d_bn(x,
     tensor = BatchNormalization(axis=1, epsilon=0.00001, name=layer + '_bn' + '2')(tensor)
     tensor = Activation('relu')(tensor)
     return tensor
-
 
 WEIGHTS = [
     'conv1', 'bn1', 'conv2', 'bn2', 'conv3', 'bn3',
@@ -342,7 +342,6 @@ def inception_block_2a(X):
 
     return inception
 
-
 def inception_block_2b(X):
     # inception4e
     X_3x3 = conv2d_bn(X,
@@ -429,6 +428,7 @@ def faceRecoModel(input_shape):
 
     # Define the input as a tensor with shape input_shape
 
+
     X_input = Input(input_shape)
 
     # Zero-Padding
@@ -486,42 +486,28 @@ def faceRecoModel(input_shape):
 
     return model
 
+
+
+
 FRmodel = faceRecoModel(input_shape=(3, 96, 96))
 FRmodel.compile(optimizer='adam', loss=triplet_loss, metrics=['accuracy'])
-
 load_weights_from_FaceNet(FRmodel)
 
 database = {}
-database["danielle"] = img_to_encoding("face/images/danielle.png", FRmodel)
-database["younes"] = img_to_encoding("face/images/younes.jpg", FRmodel)
-database["tian"] = img_to_encoding("face/images/tian.jpg", FRmodel)
-database["andrew"] = img_to_encoding("face/images/andrew.jpg", FRmodel)
-database["kian"] = img_to_encoding("face/images/kian.jpg", FRmodel)
-database["dan"] = img_to_encoding("face/images/dan.jpg", FRmodel)
-database["sebastiano"] = img_to_encoding("face/images/sebastiano.jpg", FRmodel)
-database["bertrand"] = img_to_encoding("face/images/bertrand.jpg", FRmodel)
-database["kevin"] = img_to_encoding("face/images/kevin.jpg", FRmodel)
-database["felix"] = img_to_encoding("face/images/felix.jpg", FRmodel)
-database["benoit"] = img_to_encoding("face/images/benoit.jpg", FRmodel)
-database["arnaud"] = img_to_encoding("face/images/arnaud.jpg", FRmodel)
+database["danielle"] = img_to_encoding("images/face/danielle.png", FRmodel)
+database["younes"] = img_to_encoding("images/face/younes.jpg", FRmodel)
+database["tian"] = img_to_encoding("images/face/tian.jpg", FRmodel)
+database["andrew"] = img_to_encoding("images/face/andrew.jpg", FRmodel)
+database["kian"] = img_to_encoding("images/face/kian.jpg", FRmodel)
+database["dan"] = img_to_encoding("images/face/dan.jpg", FRmodel)
+database["sebastiano"] = img_to_encoding("images/face/sebastiano.jpg", FRmodel)
+database["bertrand"] = img_to_encoding("images/face/bertrand.jpg", FRmodel)
+database["kevin"] = img_to_encoding("images/face/kevin.jpg", FRmodel)
+database["felix"] = img_to_encoding("images/face/felix.jpg", FRmodel)
+database["benoit"] = img_to_encoding("images/face/benoit.jpg", FRmodel)
+database["arnaud"] = img_to_encoding("images/face/arnaud.jpg", FRmodel)
 
-# ro_path = "face/"
-# Set weights path
-# dirPath_weights = ro_path + "weights/"
-# face_image_root = ro_path + "images/"
-# database["danielle"] = img_to_encoding(face_image_root + "danielle.png", FRmodel)
-# database["younes"] = img_to_encoding(face_image_root + "younes.jpg", FRmodel)
-# database["tian"] = img_to_encoding(face_image_root + "tian.jpg", FRmodel)
-# database["andrew"] = img_to_encoding(face_image_root + "andrew.jpg", FRmodel)
-# database["kian"] = img_to_encoding(face_image_root + "kian.jpg", FRmodel)
-# database["dan"] = img_to_encoding(face_image_root + "dan.jpg", FRmodel)
-# database["sebastiano"] = img_to_encoding(face_image_root + "sebastiano.jpg", FRmodel)
-# database["bertrand"] = img_to_encoding(face_image_root + "bertrand.jpg", FRmodel)
-# database["kevin"] = img_to_encoding(face_image_root + "kevin.jpg", FRmodel)
-# database["felix"] = img_to_encoding(face_image_root + "felix.jpg", FRmodel)
-# database["benoit"] = img_to_encoding(face_image_root + "benoit.jpg", FRmodel)
-# database["arnaud"] = img_to_encoding(face_image_root + "arnaud.jpg", FRmodel)
 
-verify("face/images/camera_0.jpg", "younes", database, FRmodel)
+verify("images/face/camera_0.jpg", "younes", database, FRmodel)
 
-who_is_it("face/images/camera_0.jpg", database, FRmodel)
+who_is_it("images/face/camera_0.jpg", database, FRmodel)
