@@ -1,3 +1,6 @@
 /venv
 .idea
-resnet50_.*
+model_data
+resnet50_weights_tf_dim_ordering_tf_kernels.h5
+resnet50_weights_tf_dim_ordering_tf_kernels_a.h5
+out
